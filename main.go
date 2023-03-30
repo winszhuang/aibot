@@ -35,8 +35,6 @@ func main() {
 	handler.HandleEvents(func(events []*linebot.Event, r *http.Request) {
 		for _, event := range events {
 			userId := event.Source.UserID
-			fmt.Println(userId)
-
 			eventHandler := &EventHandler{Event: event, Bot: bot, UserId: userId}
 
 			switch event.Type {
@@ -55,9 +53,9 @@ func handleMessage(eh *EventHandler) {
 	switch messageData := eh.Event.Message.(type) {
 	case *linebot.TextMessage:
 		message := strings.TrimSpace(messageData.Text)
-		fmt.Println(message)
+		fmt.Printf("使用者%s發送訊息: %s\n", eh.UserId, message)
 
-		err := eh.SendText(ai.Reply(message))
+		err := eh.SendText(ai.Reply(eh.UserId, message))
 		if err != nil {
 			log.Fatal(err)
 		}
