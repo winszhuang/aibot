@@ -11,7 +11,7 @@ processes = []
   buildpacks = ["gcr.io/paketo-buildpacks/go"]
 
 [env]
-  PORT = "8080"
+  PORT = "8081"
   ISPROD = true
 
 [experimental]
@@ -19,7 +19,7 @@ processes = []
 
 [[services]]
   http_checks = []
-  internal_port = 8080
+  internal_port = 8081
   processes = ["app"]
   protocol = "tcp"
   script_checks = []
