@@ -13,7 +13,7 @@ func DallEReply(prompt string) (string, error) {
 	// Sample image by link
 	reqUrl := openai.ImageRequest{
 		Prompt:         prompt,
-		Size:           openai.CreateImageSize256x256,
+		Size:           openai.CreateImageSize1024x1024,
 		ResponseFormat: openai.CreateImageResponseFormatURL,
 		N:              1,
 	}
