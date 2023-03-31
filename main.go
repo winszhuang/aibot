@@ -55,7 +55,19 @@ func handleMessage(eh *EventHandler) {
 		message := strings.TrimSpace(messageData.Text)
 		fmt.Printf("使用者%s發送訊息: %s\n", eh.UserId, message)
 
-		err := eh.SendText(ai.Reply(eh.UserId, message))
+		if strings.HasPrefix(message, "img") {
+			imagePrompt := strings.TrimPrefix(message, "img")
+			imagePrompt = strings.TrimSpace(imagePrompt)
+			url, err := ai.DallEReply(imagePrompt)
+			if err != nil {
+				eh.SendText(err.Error())
+				return
+			}
+			eh.SendImage(url)
+			return
+		}
+
+		err := eh.SendText(ai.GPTReply(eh.UserId, message))
 		if err != nil {
 			log.Fatal(err)
 		}

@@ -17,3 +17,11 @@ func (h *EventHandler) SendText(text string) error {
 	).Do()
 	return err
 }
+
+func (h *EventHandler) SendImage(url string) error {
+	_, err := h.Bot.ReplyMessage(
+		h.Event.ReplyToken,
+		linebot.NewImageMessage(url, url),
+	).Do()
+	return err
+}

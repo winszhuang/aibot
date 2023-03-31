@@ -3,25 +3,17 @@ package services
 import (
 	"context"
 	"fmt"
-	"os"
+	"sync"
 
 	"github.com/sashabaranov/go-openai"
 )
 
 var (
-	client         *openai.Client
-	userMessageMap = make(map[string][]openai.ChatCompletionMessage)
+	userMessageMap = sync.Map{}
 )
 
-func Setup() {
-	if client == nil {
-		aiKey := os.Getenv("OPEN_AI_KEY")
-		client = openai.NewClient(aiKey)
-	}
-}
-
-func Reply(lineId string, message string) string {
-	Setup()
+func GPTReply(lineId string, message string) string {
+	client := InitOpenAiClient()
 
 	userMessages := loadUserMessage(lineId)
 	userMessages = append(userMessages, openai.ChatCompletionMessage{
@@ -55,16 +47,17 @@ func Reply(lineId string, message string) string {
 }
 
 func setUserMessages(lineId string, messages []openai.ChatCompletionMessage) {
-	userMessageMap[lineId] = messages
+	userMessageMap.Store(lineId, messages)
 }
 
 func loadUserMessage(lineId string) []openai.ChatCompletionMessage {
-	_, ok := userMessageMap[lineId]
+	v, ok := userMessageMap.Load(lineId)
 	if !ok {
-		userMessageMap[lineId] = make([]openai.ChatCompletionMessage, 0)
+		v = make([]openai.ChatCompletionMessage, 0)
+		userMessageMap.Store(lineId, v)
 	}
 
-	return userMessageMap[lineId]
+	return v.([]openai.ChatCompletionMessage)
 }
 
 // only for test
