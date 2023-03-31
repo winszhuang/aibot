@@ -15,10 +15,14 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	// check is dev
+	if os.Getenv("ISPROD") == "" {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
 	}
+
 	handler, err := httphandler.New(
 		os.Getenv("CHANNEL_SECRET"),
 		os.Getenv("CHANNEL_TOKEN"),
@@ -26,6 +30,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	bot, err := handler.NewClient()
 	if err != nil {
 		log.Fatal(err)
